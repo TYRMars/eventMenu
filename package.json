@@ -1,0 +1,14 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "* 定时提醒功能\r * 最大限度的重用数据\r * 实现更强大的自定义alert（）\r * position属性的特殊用法\r * box-sizing的意义及特殊情况下用法\r * CSS3在真实项目中的应用\r * class的命名原则\r * jQuery promise的意义及其用法\r ## 开发思路\r * 清单应用的整体布局\r * 清单应用的细节完善\r * 清单应用的需求及其逻辑梳理\r * 清单应用的架构方式\r * 清单应用的数据储存方式\r * 清单应用的数据组织方式\r * 模板的实现及应用\r * 清单应用定时功能的实现\r * 清单应用响铃提醒的实现\r ## 第三方插件及jQuery API\r ### 第三方插件\r * Store.js实现localStorage读取与存储\r * jQuery插件，datetimepicker\r ### jQuery API\r * jQuery deferrd的概念及使用方式\r * jQuery选择器在真实项目中的应用的使用",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "normalize.css": "^6.0.0"
+  }
+}
