@@ -3,15 +3,25 @@
 /*==============================================================*/
 *{
     /*background: rgba(0,0,0,.1);*/
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: background .1s;
+    -moz-transition: background .1s;
+    -ms-transition: background .1s;
+    -o-transition: background .1s;
+    transition: background .1s;
+    outline: 0;
 }
 body{
-    background: #5bc0de;
+    background: #285e8e;
     color: #fff;
 }
 .container
 {
     max-width: 850px;
     margin:auto;
+    position: relative;
 }
 h1{
     text-align: center;
@@ -19,22 +29,101 @@ h1{
 .task-list{
     margin: 5px 0;
 }
-.task-item{
+input,
+.task-item,
+.task-detail-mask,
+textarea,
+button{
+    border-radius: 3px;
     padding: 10px;
+}
+textarea,
+button,
+input[type=text],input[type=date]{
+    border: 0;
+}
+
+textarea,
+input[type=text],input[type=date]{
+    width: 100%;
+}
+textarea{
+    min-height: 100px;
+}
+textarea,input[type=text],input[type=date]{
+    display: block;
+    background: #ddd;
+    -webkit-box-shadow: inset 0 2px 2px rgba(0,0,0,.4);
+    -moz-box-shadow: inset 0 2px 2px rgba(0,0,0,.4);
+    box-shadow: inset 0 2px 2px rgba(0,0,0,.4);
+}
+
+textarea:hover,
+textarea:focus,
+input[type=text]:hover,
+input[type=date]:hover,
+input[type=text]:focus,
+input[type=date]:focus
+{
+    background: #fff;
+}
+button{
+    display:inline-block;
+    cursor: pointer;
+    color: #333;
+}
+.add-task input[type=text]{
+    float: left;
+    width: 84%;
+    margin-right:1%;
+}
+.add-task [type=submit]{
+    background: #bce8f1;
+    width:15%;
+}
+.add-task [type=submit],.task-item{
+    -webkit-box-shadow: 0 2px 3px  rgba(0,0,0,.4);
+    -moz-box-shadow: 0 2px 3px  rgba(0,0,0,.4);
+    box-shadow: 0 2px 3px  rgba(0,0,0,.4);
+}
+.add-task [type=submit]:hover{
+    background: #5bc0de;
+}
+.task-item{
     background: #fff;
     color:#333;
     margin-bottom: 2px;
     border-radius: 3px;
-    -webkit-box-shadow: 0 2px 3px  rgba(0,0,0,.4);
-    -moz-box-shadow: 0 2px 3px  rgba(0,0,0,.4);
-    box-shadow: 0 2px 3px  rgba(0,0,0,.4);
     cursor:pointer;
-    -webkit-transition: background .1s;
-    -moz-transition: background .1s;
-    -ms-transition: background .1s;
-    -o-transition: background .1s;
-    transition: background .1s;
 }
 .task-item:hover{
     background:#ddd;
+}
+.task-detail-mask,.task-detail{
+    position: absolute;
+    display: none;
+}
+.task-detail{
+    background: #fff;
+    color: #333;
+    padding: 10px;
+    width:50%;
+    height:100%;
+    bottom:0;
+    right:0;
+}
+.task-detail .content{
+    padding: 10px;
+    font-weight:900;
+    cursor: pointer;
+}
+.task-detail > *{
+    margin-bottom: 10px;
+}
+.task-detail-mask{
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    background: rgba(30,30,30,.3);
 }
