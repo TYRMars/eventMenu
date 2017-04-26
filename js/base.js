@@ -34,6 +34,21 @@
     }
 
     function render_task_list() {
-        console.log('1',1);
+        var $task_list = $('.task-list');
+        for(var i=0;i<task_list.length;i++){
+            var $task = render_task_tpl(task_list[i]);
+
+        }
+    }
+
+    function render_task_time() {
+        var list_item_tpl =
+            '<div class="task-item"><!--任务开始-->' +
+            '<span><input type="checkbox"/></span>' +
+            '<span class="task-content">'+ data.content +'</span>' +
+            '<span>删除</span>' +
+            '<span>详细</span>' +
+            '</div><!--任务结束-->';
+        return $(list_item_tpl);
     }
 })();
