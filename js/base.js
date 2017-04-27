@@ -5,13 +5,18 @@
     'use strict';
 
     var $form_add_task =$('.add-task')
-        ,$delete_task
+        ,$task_delete
+        ,$task_detail
+        ,$task_detail_trigger
+        ,$task_detail = $('.task-detail')
+        ,$task_detail_mask = $('.task-detail-mask')
         ,task_list={}
         ;
 
     init();
 
     $form_add_task.on('submit', on_add_task_form_submit);
+    $task_detail_mask.on('click',hide_task_detail);
 
     function  on_add_task_form_submit(e) {
         var new_task ={},$input;
@@ -29,15 +34,35 @@
         }
     }
 
+    function listen_task_detail() {
+        $task_detail_trigger.on('click',function () {
+            var $this = $(this);
+            var $item = $this.parent();
+            var index = $item.data('index');
+            console.log('index',index);
+            show_task_detail('index');
+
+        })
+    }
+
     /*监听 delete_task*/
     function listen_delete_task() {
-        $delete_task.on('click',function () {
+        $task_delete.on('click',function () {
             var $this = $(this);
             var $item = $this.parent();
             var index = $item.data('index');
             var tmp = confirm('确定删除！');
             return tmp ? delete_task(index) : null;
         })
+    }
+
+    function show_task_detail() {
+        $task_detail.show();
+        $task_detail_mask.show();
+    }
+    function hide_task_detail() {
+        $task_detail.hide();
+        $task_detail_mask.hide();
     }
 
 
@@ -53,7 +78,7 @@
     * 刷新local storage数据并渲染模板*/
     function refresh_task_list() {
         /*更新localStorage*/
-        store.set('task_list',task_list)
+        store.set('task_list',task_list);
         render_task_list();
 
     }
@@ -84,8 +109,10 @@
         }
 
         /*实时更新锚点*/
-        $delete_task = $('.action.delete');
+        $task_delete = $('.action.delete');
+        $task_detail_trigger = $('.action.detail');
         listen_delete_task();
+        listen_task_detail();
     }
 
     function render_task_item(data,index) {
@@ -95,7 +122,7 @@
             '<span><input type="checkbox"/></span>' +
             '<span class="task-content">'+ data.content +'</span>' +
             '<span class="action delete"> 删除 </span>' +
-            '<span class="action"> 详细 </span>' +
+            '<span class="action detail"> 详细 </span>' +
             '</div>';
         return $(list_item_item);
     }
