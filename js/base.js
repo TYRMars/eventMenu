@@ -11,6 +11,8 @@
         ,$task_detail = $('.task-detail')
         ,$task_detail_mask = $('.task-detail-mask')
         ,task_list={}
+        ,current_index
+        ,$update_form
         ;
 
     init();
@@ -34,14 +36,13 @@
         }
     }
 
+    /*监听 task_detail*/
     function listen_task_detail() {
         $task_detail_trigger.on('click',function () {
             var $this = $(this);
             var $item = $this.parent();
             var index = $item.data('index');
-            console.log('index',index);
-            show_task_detail('index');
-
+            show_task_detail(index);
         })
     }
 
@@ -56,15 +57,60 @@
         })
     }
 
-    function show_task_detail() {
+    /*查看task详情*/
+    function show_task_detail(index) {
+        render_task_detail(index);
+        current_index = index;
         $task_detail.show();
         $task_detail_mask.show();
     }
+
+    /*更新task*/
+    function update_task(index,data) {
+        if(!index || !task_list[index])return;
+        task_list[index]=$.merge({},task_list[index],data);
+        console.log('store.get(task_list)',store.get('task_list'));
+        render_task_list();
+
+    }
+
+
     function hide_task_detail() {
         $task_detail.hide();
         $task_detail_mask.hide();
     }
 
+    /*渲染指定Task的详细信息*/
+    function render_task_detail(index) {
+        if(index === undefined || !task_list[index]) return;
+
+        var item = task_list[index];
+
+        var tpl='<form>'+
+            '<div class="content">'+ item.content + '</div>' +
+            '<div><!--任务描述开始-->' +
+            '<div class="desc">' +
+            '<textarea name="desc" >'+ item.desc +'</textarea>' +
+            '</div>' +
+            '</div><!--任务描述结束-->' +
+            '<div class="remind"><!--任务定时提醒开始-->' +
+            '<input name="remind_date" type="date">' +
+            '<button type="submit">更新</button>' +
+            '</div><!--任务定时提醒结束-->'+
+            '</form>';
+
+        $task_detail.html(null);
+        $task_detail.html(tpl);
+        $update_form = $task_detail.find('form');
+        $update_form.on('submit',function (e) {
+            e.preventDefault();
+            var data ={};
+            data.content =$(this).find('[name=content]').val();
+            data.desc =$(this).find('[name=desc]').val();
+            data.remind_date =$(this).find('[name=remind_date]').val();
+            update_task(index,data);
+        });
+    }
 
     function add_task(new_task) {
         /*将新Task推入Task__list*/
@@ -88,7 +134,6 @@
         if(index === undefined || !task_list[index]) return;
         /*删除task*/
         delete task_list[index];
-        console.log('task_list',task_list);
         /*更新localStorage*/
         refresh_task_list();
     }
@@ -115,15 +160,16 @@
         listen_task_detail();
     }
 
+    /*渲染单条task*/
     function render_task_item(data,index) {
         if(!data || !index) return;
-        var list_item_item =
+        var list_item_tpl =
             '<div class="task-item" data-index="' +index+ '">' +
             '<span><input type="checkbox"/></span>' +
             '<span class="task-content">'+ data.content +'</span>' +
             '<span class="action delete"> 删除 </span>' +
             '<span class="action detail"> 详细 </span>' +
             '</div>';
-        return $(list_item_item);
+        return $(list_item_tpl);
     }
 })();
