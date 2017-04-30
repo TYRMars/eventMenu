@@ -13,6 +13,7 @@
         ,task_list={}
         ,current_index
         ,$update_form
+        ,task_detail
         ;
 
     init();
@@ -68,8 +69,9 @@
     /*更新task*/
     function update_task(index,data) {
         if(!index || !task_list[index])return;
-        task_list[index]=$.merge({},task_list[index],data);
-        console.log('store.get(task_list)',store.get('task_list'));
+        task_list[index]=/*$.merge({},task_list[index],*/data;
+        /*console.log('task_list[index]',task_list[index]);*/
+
         render_task_list();
 
     }
@@ -140,9 +142,8 @@
 
     function init() {
         task_list = store.get('task_list') || [];
-        if(task_list.length){
-            render_task_list();
-        }
+        if(task_list.length) render_task_list();
+        console.log('store.get(task_list)',store.get('task_list'));
     }
 
     function render_task_list() {
