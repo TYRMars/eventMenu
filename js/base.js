@@ -69,9 +69,8 @@
     /*更新task*/
     function update_task(index,data) {
         if(!index || !task_list[index])return;
-        task_list[index]=/*$.merge({},task_list[index],*/data;
+        task_list[index]= $.merge(task_list[index],data);
         /*console.log('task_list[index]',task_list[index]);*/
-
         render_task_list();
 
     }
@@ -88,11 +87,13 @@
 
         var item = task_list[index];
 
+        console.log('item',item);
+
         var tpl='<form>'+
-            '<div class="content">'+ item.content + '</div>' +
+            '<div class="content">'+ (item.content || '') + '</div>' +
             '<div><!--任务描述开始-->' +
             '<div class="desc">' +
-            '<textarea name="desc" >'+ item.desc +'</textarea>' +
+            '<textarea name="desc" >'+ (item.desc || '') +'</textarea>' +
             '</div>' +
             '</div><!--任务描述结束-->' +
             '<div class="remind"><!--任务定时提醒开始-->' +
@@ -104,14 +105,18 @@
         $task_detail.html(null);
         $task_detail.html(tpl);
         $update_form = $task_detail.find('form');
-        $update_form.on('submit',function (e) {
+        console.log('$update_form',$update_form);
+        $update_form.on('submit', function (e) {
             e.preventDefault();
-            var data ={};
-            data.content =$(this).find('[name=content]').val();
-            data.desc =$(this).find('[name=desc]').val();
-            data.remind_date =$(this).find('[name=remind_date]').val();
-            update_task(index,data);
-        });
+            var data = {};
+            /*获取表单中各个input的值*/
+            data.content = $(this).find('[name=content]').val();
+            data.desc = $(this).find('[name=desc]').val();
+            data.remind_date = $(this).find('[name=remind_date]').val();
+            console.log('data',data);
+            update_task(index, data);
+            hide_task_detail();
+        })
     }
 
     function add_task(new_task) {
