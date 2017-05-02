@@ -71,6 +71,7 @@
         if(!index || !task_list[index])return;
         task_list[index]= $.merge(task_list[index],data);
         /*console.log('task_list[index]',task_list[index]);*/
+        console.log('store.get(task_list)',store.get('task_list'));
         render_task_list();
 
     }
