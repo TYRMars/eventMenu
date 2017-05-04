@@ -69,10 +69,8 @@
     /*更新task*/
     function update_task(index,data) {
         if(!index || !task_list[index])return;
-        task_list[index]= $.merge(task_list[index],data);
-        /*console.log('task_list[index]',task_list[index]);*/
-        console.log('store.get(task_list)',store.get('task_list'));
-        render_task_list();
+        task_list[index]= $.extend({},task_list[index],data);
+        refresh_task_list();
 
     }
 
@@ -87,8 +85,6 @@
         if(index === undefined || !task_list[index]) return;
 
         var item = task_list[index];
-
-        console.log('item',item);
 
         var tpl='<form>'+
             '<div class="content">'+ (item.content || '') + '</div>' +
@@ -106,7 +102,6 @@
         $task_detail.html(null);
         $task_detail.html(tpl);
         $update_form = $task_detail.find('form');
-        console.log('$update_form',$update_form);
         $update_form.on('submit', function (e) {
             e.preventDefault();
             var data = {};
@@ -114,7 +109,6 @@
             data.content = $(this).find('[name=content]').val();
             data.desc = $(this).find('[name=desc]').val();
             data.remind_date = $(this).find('[name=remind_date]').val();
-            console.log('data',data);
             update_task(index, data);
             hide_task_detail();
         })
@@ -134,7 +128,6 @@
         /*更新localStorage*/
         store.set('task_list',task_list);
         render_task_list();
-
     }
 
     function delete_task(index) {
@@ -149,7 +142,6 @@
     function init() {
         task_list = store.get('task_list') || [];
         if(task_list.length) render_task_list();
-        console.log('store.get(task_list)',store.get('task_list'));
     }
 
     function render_task_list() {
