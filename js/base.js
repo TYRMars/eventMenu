@@ -4,16 +4,17 @@
 ;(function(){
     'use strict';
 
-    var $form_add_task =$('.add-task')
+    var $form_add_task = $('.add-task')
         ,$task_delete
         ,$task_detail
         ,$task_detail_trigger
         ,$task_detail = $('.task-detail')
         ,$task_detail_mask = $('.task-detail-mask')
-        ,task_list={}
+        ,$task_detail_content_input
+        ,task_list=[]
         ,current_index
         ,$update_form
-        ,task_detail
+        ,$task_detail_content
         ;
 
     init();
@@ -87,21 +88,31 @@
         var item = task_list[index];
 
         var tpl='<form>'+
-            '<div class="content">'+ (item.content || '') + '</div>' +
-            '<div><!--任务描述开始-->' +
-            '<div class="desc">' +
-            '<textarea name="desc" >'+ (item.desc || '') +'</textarea>' +
+            '<div class="content">'+
+            item.content  +
+            '</div>' +
+            '<div class="input-item"><!--任务描述开始-->' +
+            '<input style="display: none" type="text" name="content" value="'+(item.content || '')+'">'+
+            '</div>'+
+            '<div class="desc input-item">' +
+            '<textarea name="desc" >'+ (item.desc || '')  +'</textarea>' +
             '</div>' +
             '</div><!--任务描述结束-->' +
-            '<div class="remind"><!--任务定时提醒开始-->' +
-            '<input name="remind_date" type="date">' +
-            '<button type="submit">更新</button>' +
-            '</div><!--任务定时提醒结束-->'+
+            '<div class="remind input-item"><!--任务定时提醒开始-->' +
+            '<input name="remind_date" type="date" value="'+item.remind_date+'">' +
+            '</div>'+
+            '<div class="input-item"><button type="submit">更新</button></div><!--任务定时提醒结束-->'+
             '</form>';
 
         $task_detail.html(null);
         $task_detail.html(tpl);
         $update_form = $task_detail.find('form');
+        $task_detail_content =$update_form.find('.content');
+        $task_detail_content_input = $update_form.find('[name=content]');
+        $task_detail_content.on('dblclick',function () {
+            $task_detail_content_input.show();
+            $task_detail_content.hide();
+        })
         $update_form.on('submit', function (e) {
             e.preventDefault();
             var data = {};
@@ -115,6 +126,7 @@
     }
 
     function add_task(new_task) {
+
         /*将新Task推入Task__list*/
         task_list.push(new_task);
         /*更新localStorage*/
@@ -147,11 +159,10 @@
     function render_task_list() {
         var $task_list = $('.task-list');
         $task_list.html('');
-        for(var i=0;i<task_list.length;i++){
+        for(var i = 0;i<task_list.length;i++){
             var $task = render_task_item(task_list[i],i);
-            $task_list.append($task);
+            $task_list.prepend($task);
         }
-
         /*实时更新锚点*/
         $task_delete = $('.action.delete');
         $task_detail_trigger = $('.action.detail');
