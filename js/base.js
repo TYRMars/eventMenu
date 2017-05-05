@@ -10,11 +10,11 @@
         ,$task_detail_trigger
         ,$task_detail = $('.task-detail')
         ,$task_detail_mask = $('.task-detail-mask')
-        ,$task_detail_content_input
         ,task_list=[]
         ,current_index
         ,$update_form
         ,$task_detail_content
+        ,$task_detail_content_input
         ;
 
     init();
@@ -38,12 +38,17 @@
         }
     }
 
-    /*监听 task_detail*/
+    /*监听打开task详情事件 task_detail*/
     function listen_task_detail() {
+        var index;
+        $('.task-item').on('dblclick',function () {
+            index = $(this).data('index');
+            show_task_detail(index);
+        })
         $task_detail_trigger.on('click',function () {
             var $this = $(this);
             var $item = $this.parent();
-            var index = $item.data('index');
+            index = $item.data('index');
             show_task_detail(index);
         })
     }
@@ -61,9 +66,12 @@
 
     /*查看task详情*/
     function show_task_detail(index) {
+        /*生成详情模块*/
         render_task_detail(index);
         current_index = index;
+        /*显示详情模版（默认隐藏）*/
         $task_detail.show();
+        /*显示详情模版mask（默认隐藏）*/
         $task_detail_mask.show();
     }
 
@@ -72,10 +80,9 @@
         if(!index || !task_list[index])return;
         task_list[index]= $.extend({},task_list[index],data);
         refresh_task_list();
-
     }
 
-
+    /*隐藏task详情*/
     function hide_task_detail() {
         $task_detail.hide();
         $task_detail_mask.hide();
@@ -104,15 +111,22 @@
             '<div class="input-item"><button type="submit">更新</button></div><!--任务定时提醒结束-->'+
             '</form>';
 
+        /*清空task详情模版*/
         $task_detail.html(null);
+        /*用新模版替换旧模版*/
         $task_detail.html(tpl);
+        /*选中其中的form元素，因为之后会使用其监听submit事件*/
         $update_form = $task_detail.find('form');
+        /*选中显示task内容的元素*/
         $task_detail_content =$update_form.find('.content');
+        /*选中显示task input的元素*/
         $task_detail_content_input = $update_form.find('[name=content]');
+        /*双击内容元素显示input，隐藏自己*/
         $task_detail_content.on('dblclick',function () {
             $task_detail_content_input.show();
             $task_detail_content.hide();
         })
+
         $update_form.on('submit', function (e) {
             e.preventDefault();
             var data = {};
@@ -125,6 +139,8 @@
         })
     }
 
+
+    /*添加task*/
     function add_task(new_task) {
 
         /*将新Task推入Task__list*/
@@ -134,13 +150,13 @@
         return true;
     }
 
-    /*
-    * 刷新local storage数据并渲染模板*/
+    /*刷新local storage数据并渲染模板*/
     function refresh_task_list() {
         /*更新localStorage*/
         store.set('task_list',task_list);
         render_task_list();
     }
+
 
     function delete_task(index) {
         /*如果没有index 或者index不存在则直接返回*/
@@ -151,10 +167,12 @@
         refresh_task_list();
     }
 
+
     function init() {
         task_list = store.get('task_list') || [];
         if(task_list.length) render_task_list();
     }
+
 
     function render_task_list() {
         var $task_list = $('.task-list');
