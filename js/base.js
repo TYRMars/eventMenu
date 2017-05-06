@@ -2,8 +2,10 @@
  * Created by Jonathan Zhang on 2017/4/24.
  */
 ;(function(){
+    /*严格模式*/
     'use strict';
 
+    /*声明变量*/
     var $form_add_task = $('.add-task')
         ,$task_delete
         ,$task_detail
@@ -15,6 +17,7 @@
         ,$update_form
         ,$task_detail_content
         ,$task_detail_content_input
+        ,$checkbox_complete
         ;
 
     init();
@@ -64,6 +67,13 @@
         })
     }
 
+    /**/
+    function listen_checkbox_complete() {
+      $checkbox_complete.on('click',function() {
+        console.log('1',1);
+      })
+    }
+
     /*查看task详情*/
     function show_task_detail(index) {
         /*生成详情模块*/
@@ -88,6 +98,71 @@
         $task_detail_mask.hide();
     }
 
+    /*添加task*/
+    function add_task(new_task) {
+
+        /*将新Task推入Task__list*/
+        task_list.push(new_task);
+        /*更新localStorage*/
+        refresh_task_list();
+        return true;
+    }
+
+    /*刷新local storage数据并渲染模板*/
+    function refresh_task_list() {
+        /*更新localStorage*/
+        store.set('task_list',task_list);
+        render_task_list();
+    }
+
+    /*删除Task*/
+    function delete_task(index) {
+        /*如果没有index 或者index不存在则直接返回*/
+        if(index === undefined || !task_list[index]) return;
+        /*删除task*/
+        delete task_list[index];
+        /*更新localStorage*/
+        refresh_task_list();
+    }
+
+    /*存储task_list到store*/
+    function init() {
+        task_list = store.get('task_list') || [];
+        if(task_list.length) render_task_list();
+    }
+
+    /*传递task_list更新页面*/
+    function render_task_list() {
+        var $task_list = $('.task-list');
+        $task_list.html('');
+        for(var i = 0;i<task_list.length;i++){
+            var $task = render_task_item(task_list[i],i);
+            $task_list.prepend($task);
+        }
+        /*实时更新锚点*/
+        $task_delete = $('.action.delete');
+        $task_detail_trigger = $('.action.detail');
+        $checkbox_complete = $('.task-list.complete');
+        listen_delete_task();
+        listen_task_detail();
+        listen_checkbox_complete();
+    }
+
+/*-------------------------------渲染模版--------------------------------------*/
+
+    /*渲染单条task*/
+    function render_task_item(data,index) {
+        if(!data || !index) return;
+        var list_item_tpl =
+            '<div class="task-item" data-index="' +index+ '">' +
+            '<span><input class="complete" type="checkbox"/></span>' +
+            '<span class="task-content">'+ data.content +'</span>' +
+            '<span class="action delete"> 删除 </span>' +
+            '<span class="action detail"> 详细 </span>' +
+            '</div>';
+        return $(list_item_tpl);
+    }
+
     /*渲染指定Task的详细信息*/
     function render_task_detail(index) {
         if(index === undefined || !task_list[index]) return;
@@ -99,7 +174,8 @@
             item.content  +
             '</div>' +
             '<div class="input-item"><!--任务描述开始-->' +
-            '<input style="display: none" type="text" name="content" value="'+(item.content || '')+'">'+
+            '<input style="display: none" type="text" name="content" value="'+
+            (item.content || '')+'">'+
             '</div>'+
             '<div class="desc input-item">' +
             '<textarea name="desc" >'+ (item.desc || '')  +'</textarea>' +
@@ -108,7 +184,8 @@
             '<div class="remind input-item"><!--任务定时提醒开始-->' +
             '<input name="remind_date" type="date" value="'+item.remind_date+'">' +
             '</div>'+
-            '<div class="input-item"><button type="submit">更新</button></div><!--任务定时提醒结束-->'+
+            '<div class="input-item"><button type="submit">更新</button></div>'+
+            '<!--任务定时提醒结束-->'+
             '</form>';
 
         /*清空task详情模版*/
@@ -137,67 +214,5 @@
             update_task(index, data);
             hide_task_detail();
         })
-    }
-
-
-    /*添加task*/
-    function add_task(new_task) {
-
-        /*将新Task推入Task__list*/
-        task_list.push(new_task);
-        /*更新localStorage*/
-        refresh_task_list();
-        return true;
-    }
-
-    /*刷新local storage数据并渲染模板*/
-    function refresh_task_list() {
-        /*更新localStorage*/
-        store.set('task_list',task_list);
-        render_task_list();
-    }
-
-
-    function delete_task(index) {
-        /*如果没有index 或者index不存在则直接返回*/
-        if(index === undefined || !task_list[index]) return;
-        /*删除task*/
-        delete task_list[index];
-        /*更新localStorage*/
-        refresh_task_list();
-    }
-
-
-    function init() {
-        task_list = store.get('task_list') || [];
-        if(task_list.length) render_task_list();
-    }
-
-
-    function render_task_list() {
-        var $task_list = $('.task-list');
-        $task_list.html('');
-        for(var i = 0;i<task_list.length;i++){
-            var $task = render_task_item(task_list[i],i);
-            $task_list.prepend($task);
-        }
-        /*实时更新锚点*/
-        $task_delete = $('.action.delete');
-        $task_detail_trigger = $('.action.detail');
-        listen_delete_task();
-        listen_task_detail();
-    }
-
-    /*渲染单条task*/
-    function render_task_item(data,index) {
-        if(!data || !index) return;
-        var list_item_tpl =
-            '<div class="task-item" data-index="' +index+ '">' +
-            '<span><input type="checkbox"/></span>' +
-            '<span class="task-content">'+ data.content +'</span>' +
-            '<span class="action delete"> 删除 </span>' +
-            '<span class="action detail"> 详细 </span>' +
-            '</div>';
-        return $(list_item_tpl);
     }
 })();
