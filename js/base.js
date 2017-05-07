@@ -71,8 +71,10 @@
     function listen_checkbox_complete() {
       $checkbox_complete.on('click',function()
       {
-        console.log('1',1);
-        console.log($(this).is(':checked'));
+        var $this = $(this);
+        var is_complete = $(this).is(':checked');
+        var index = $this.parent().parent().data('index');
+        update_task(index,{complete: is_complete});
       })
     }
 
@@ -102,7 +104,6 @@
 
     /*添加task*/
     function add_task(new_task) {
-
         /*将新Task推入Task__list*/
         task_list.push(new_task);
         /*更新localStorage*/
@@ -144,7 +145,7 @@
         /*实时更新锚点*/
         $task_delete = $('.action.delete');
         $task_detail_trigger = $('.action.detail');
-        $checkbox_complete = $('.task-list.complete');
+        $checkbox_complete = $('.task-list .complete');
         listen_delete_task();
         listen_task_detail();
         listen_checkbox_complete();
