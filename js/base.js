@@ -67,10 +67,12 @@
         })
     }
 
-    /**/
+    /*监听checkbox*/
     function listen_checkbox_complete() {
-      $checkbox_complete.on('click',function() {
+      $checkbox_complete.on('click',function()
+      {
         console.log('1',1);
+        console.log($(this).is(':checked'));
       })
     }
 
@@ -88,7 +90,7 @@
     /*更新task*/
     function update_task(index,data) {
         if(!index || !task_list[index])return;
-        task_list[index]= $.extend({},task_list[index],data);
+        task_list[index]= data;
         refresh_task_list();
     }
 
@@ -150,18 +152,6 @@
 
 /*-------------------------------渲染模版--------------------------------------*/
 
-    /*渲染单条task*/
-    function render_task_item(data,index) {
-        if(!data || !index) return;
-        var list_item_tpl =
-            '<div class="task-item" data-index="' +index+ '">' +
-            '<span><input class="complete" type="checkbox"/></span>' +
-            '<span class="task-content">'+ data.content +'</span>' +
-            '<span class="action delete"> 删除 </span>' +
-            '<span class="action detail"> 详细 </span>' +
-            '</div>';
-        return $(list_item_tpl);
-    }
 
     /*渲染指定Task的详细信息*/
     function render_task_detail(index) {
@@ -214,5 +204,18 @@
             update_task(index, data);
             hide_task_detail();
         })
+    }
+
+    /*渲染单条task*/
+    function render_task_item(data,index) {
+        if(!data || !index) return;
+        var list_item_tpl =
+            '<div class="task-item" data-index="' + index + '">' +
+            '<span><input class="complete" type="checkbox"/></span>' +
+            '<span class="task-content">'+ data.content +'</span>' +
+            '<span class="action delete"> 删除 </span>' +
+            '<span class="action detail"> 详细 </span>' +
+            '</div>';
+        return $(list_item_tpl);
     }
 })();
