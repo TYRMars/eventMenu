@@ -72,10 +72,23 @@
       $checkbox_complete.on('click',function()
       {
         var $this = $(this);
-        var is_complete = $(this).is(':checked');
+        console.log('$this',$this);
         var index = $this.parent().parent().data('index');
-        update_task(index,{complete: is_complete});
+        var item = get(index);
+        if(item.complete)
+        {
+            update_task(index,{complete:false});
+        }
+        else
+        {
+            update_task(index,{complete:true});
+        }
       })
+    }
+
+    /*得到task_list内容*/
+    function get(index) {
+        return store.get('task_list')[index];
     }
 
     /*查看task详情*/
@@ -92,8 +105,9 @@
     /*更新task*/
     function update_task(index,data) {
         if(!index || !task_list[index])return;
-        task_list[index]= data;
+        task_list[index]= $.extend({}, task_list[index],data);
         refresh_task_list();
+        console.log('task_list',task_list);
     }
 
     /*隐藏task详情*/
@@ -138,14 +152,29 @@
     function render_task_list() {
         var $task_list = $('.task-list');
         $task_list.html('');
-        for(var i = 0;i<task_list.length;i++){
-            var $task = render_task_item(task_list[i],i);
-            $task_list.prepend($task);
+        var complete_items = [];
+        /*渲染识别未完成task*/
+        for(var i=0;i<task_list.length;i++){
+            var item = task_list[i];
+            if(task_list[i].complete){
+                complete_items.push(item);
+            }
+            else{
+                var $task = render_task_item(item,i);
+                $task_list.prepend($task);
+            }
+        }
+        /*渲染已完成task*/
+        for(var j=0; j < complete_items.length; j++){
+            $task = render_task_item(item,j);
+            if(!$task) continue;
+            $task.addClass('completed');
+            $task_list.append($task);
         }
         /*实时更新锚点*/
         $task_delete = $('.action.delete');
         $task_detail_trigger = $('.action.detail');
-        $checkbox_complete = $('.task-list .complete');
+        $checkbox_complete = $('.task-list .complete[type=checkbox]');
         listen_delete_task();
         listen_task_detail();
         listen_checkbox_complete();
@@ -212,7 +241,7 @@
         if(!data || !index) return;
         var list_item_tpl =
             '<div class="task-item" data-index="' + index + '">' +
-            '<span><input class="complete" type="checkbox"/></span>' +
+            '<span><input class="complete" '+ (data.complete ? 'checked':'') + ' type="checkbox"/></span>' +
             '<span class="task-content">'+ data.content +'</span>' +
             '<span class="action delete"> 删除 </span>' +
             '<span class="action detail"> 详细 </span>' +
