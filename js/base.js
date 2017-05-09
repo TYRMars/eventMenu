@@ -195,6 +195,7 @@
             '</div>' +
             '</div><!--任务描述结束-->' +
             '<div class="remind input-item"><!--任务定时提醒开始-->' +
+            '<label>提醒时间</label>'+
             '<input name="remind_date" type="date" value="'+item.remind_date+'">' +
             '</div>'+
             '<div class="input-item"><button type="submit">更新</button></div>'+
