@@ -12,7 +12,7 @@
         ,$task_detail_trigger
         ,$task_detail = $('.task-detail')
         ,$task_detail_mask = $('.task-detail-mask')
-        ,task_list=[]
+        ,task_list = []
         ,current_index
         ,$update_form
         ,$task_detail_content
@@ -41,6 +41,7 @@
         }
     }
 
+
     /*监听打开task详情事件 task_detail*/
     function listen_task_detail() {
         var index;
@@ -67,23 +68,17 @@
         })
     }
 
-    /*监听checkbox*/
+    /*监听完成Task事件*/
     function listen_checkbox_complete() {
-      $checkbox_complete.on('click',function()
-      {
-        var $this = $(this);
-        console.log('$this',$this);
-        var index = $this.parent().parent().data('index');
-        var item = get(index);
-        if(item.complete)
-        {
-            update_task(index,{complete:false});
-        }
-        else
-        {
-            update_task(index,{complete:true});
-        }
-      })
+        $checkbox_complete.on('click', function () {
+            var $this = $(this);
+            var index = $this.parent().parent().data('index');
+            var item = get(index);
+            if (item.complete)
+                update_task(index, {complete: false});
+            else
+                update_task(index, {complete: true});
+        })
     }
 
     /*得到task_list内容*/
@@ -128,7 +123,7 @@
     /*刷新local storage数据并渲染模板*/
     function refresh_task_list() {
         /*更新localStorage*/
-        store.set('task_list',task_list);
+        store.set('task_list', task_list);
         render_task_list();
     }
 
@@ -145,7 +140,8 @@
     /*存储task_list到store*/
     function init() {
         task_list = store.get('task_list') || [];
-        if(task_list.length) render_task_list();
+        if (task_list.length)
+            render_task_list();
     }
 
     /*传递task_list更新页面*/
@@ -153,28 +149,25 @@
         var $task_list = $('.task-list');
         $task_list.html('');
         var complete_items = [];
-        /*渲染识别未完成task*/
-        for(var i=0;i<task_list.length;i++){
+        for (var i = 0; i < task_list.length; i++) {
             var item = task_list[i];
-            if(task_list[i].complete){
-                complete_items.push(item);
-            }
-            else{
-                var $task = render_task_item(item,i);
-                $task_list.prepend($task);
-            }
+            if (item && item.complete)
+                complete_items[i] = item;
+            else
+                var $task = render_task_item(item, i);
+            $task_list.prepend($task);
         }
-        /*渲染已完成task*/
-        for(var j=0; j < complete_items.length; j++){
-            $task = render_task_item(item,j);
-            if(!$task) continue;
+
+        for (var j = 0; j < complete_items.length; j++) {
+            $task = render_task_item(complete_items[j], j);
+            if (!$task) continue;
             $task.addClass('completed');
             $task_list.append($task);
         }
-        /*实时更新锚点*/
-        $task_delete = $('.action.delete');
-        $task_detail_trigger = $('.action.detail');
-        $checkbox_complete = $('.task-list .complete[type=checkbox]');
+
+        $task_delete = $('.action.delete')
+        $task_detail_trigger = $('.action.detail')
+        $checkbox_complete = $('.task-list .complete[type=checkbox]')
         listen_delete_task();
         listen_task_detail();
         listen_checkbox_complete();
