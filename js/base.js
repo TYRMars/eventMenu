@@ -26,21 +26,23 @@
     $task_detail_mask.on('click',hide_task_detail);
 
     function  on_add_task_form_submit(e) {
-        var new_task ={}, $input;
+        var in_task ={}, $input;
         /*禁用默认行为*/
         e.preventDefault();
         /*获取Task的值*/
-        $input =  $(this).find('input[name=content]');
-        new_task.content = $input.val();
+        $input=$(this).find('input[name=content]');
+        console.log('$input',$input);
+        in_task.content = $input.val();
+        console.log('in_task',in_task);
         /*如果新Task的值为空 则直接返回 否则继续执行*/
-        if(!new_task.content) return;
+        if(!in_task.content) return;
         /*存入新Task*/
-        if(add_task(new_task)) {
+        if(add_task(in_task)) {
+            console.log('in_task',in_task);
             //render_task_list();
             $input.val(null);
         }
     }
-
 
 
     /*监听打开task详情事件 task_detail*/
@@ -115,7 +117,9 @@
     /*添加task*/
     function add_task(new_task) {
         /*将新Task推入Task__list*/
+        console.log('new_task',new_task);
         task_list.push(new_task);
+        console.log('task_list',task_list);
         /*更新localStorage*/
         refresh_task_list();
         return true;
@@ -125,6 +129,7 @@
     function refresh_task_list() {
         /*更新localStorage*/
         store.set('task_list', task_list);
+
         render_task_list();
     }
 
@@ -149,6 +154,7 @@
     function task_remind_check() {
         for(var i=0;i<task_list.length;i++){
             var item =get(i);
+            if(!item || !item.remind_date)
             console.log('item',item);
         }
     }
@@ -191,8 +197,9 @@
 
     /*渲染指定Task的详细信息*/
     function render_task_detail(index) {
+        console.log('index',index);
         if(index === undefined || !task_list[index]) return;
-
+        console.log('index',index);
         var item = task_list[index];
 
         var tpl='<form>'+
@@ -246,7 +253,11 @@
 
     /*渲染单条task*/
     function render_task_item(data,index) {
-        if (!data == null|| !index == null) return;
+        console.log('index',index);
+        console.log('data',data);
+        if (!data || !index ) return;
+        console.log('index',index);
+        console.log('data',data);
         var list_item_tpl =
             '<div class="task-item" data-index="' + index + '">' +
             '<span><input class="complete" '+ (data.complete ? 'checked':'') + ' type="checkbox"/></span>' +
