@@ -26,7 +26,7 @@
     $task_detail_mask.on('click',hide_task_detail);
 
     function  on_add_task_form_submit(e) {
-        var new_task ={},$input;
+        var new_task ={}, $input;
         /*禁用默认行为*/
         e.preventDefault();
         /*获取Task的值*/
@@ -36,10 +36,11 @@
         if(!new_task.content) return;
         /*存入新Task*/
         if(add_task(new_task)) {
-            render_task_list();
+            //render_task_list();
             $input.val(null);
         }
     }
+
 
 
     /*监听打开task详情事件 task_detail*/
@@ -48,7 +49,7 @@
         $('.task-item').on('dblclick',function () {
             index = $(this).data('index');
             show_task_detail(index);
-        })
+        });
         $task_detail_trigger.on('click',function () {
             var $this = $(this);
             var $item = $this.parent();
@@ -99,10 +100,10 @@
 
     /*更新task*/
     function update_task(index,data) {
-        if(!index || !task_list[index])return;
-        task_list[index]= $.extend({}, task_list[index],data);
+        if(!index || !task_list[index])
+            return;
+        task_list[index]= $.extend({}, task_list[index], data);
         refresh_task_list();
-        console.log('task_list',task_list);
     }
 
     /*隐藏task详情*/
@@ -142,6 +143,14 @@
         task_list = store.get('task_list') || [];
         if (task_list.length)
             render_task_list();
+        task_remind_check();
+    }
+
+    function task_remind_check() {
+        for(var i=0;i<task_list.length;i++){
+            var item =get(i);
+            console.log('item',item);
+        }
     }
 
     /*传递task_list更新页面*/
@@ -151,10 +160,13 @@
         var complete_items = [];
         for (var i = 0; i < task_list.length; i++) {
             var item = task_list[i];
-            if (item && item.complete)
+            console.log('item',item);
+            if (item && item.complete){
                 complete_items[i] = item;
-            else
+            }
+            else{
                 var $task = render_task_item(item, i);
+            }
             $task_list.prepend($task);
         }
 
@@ -165,9 +177,10 @@
             $task_list.append($task);
         }
 
-        $task_delete = $('.action.delete')
-        $task_detail_trigger = $('.action.detail')
-        $checkbox_complete = $('.task-list .complete[type=checkbox]')
+        console.log('$task_list',$task_list);
+        $task_delete = $('.action.delete');
+        $task_detail_trigger = $('.action.detail');
+        $checkbox_complete = $('.task-list .complete[type=checkbox]');
         listen_delete_task();
         listen_task_detail();
         listen_checkbox_complete();
@@ -196,7 +209,7 @@
             '</div><!--任务描述结束-->' +
             '<div class="remind input-item"><!--任务定时提醒开始-->' +
             '<label>提醒时间</label>'+
-            '<input name="remind_date" type="date" value="'+item.remind_date+'">' +
+            '<input class="date_time" name="remind_date" type="text" value="'+(item.remind_date||'')+'">' +
             '</div>'+
             '<div class="input-item"><button type="submit">更新</button></div>'+
             '<!--任务定时提醒结束-->'+
@@ -206,6 +219,7 @@
         $task_detail.html(null);
         /*用新模版替换旧模版*/
         $task_detail.html(tpl);
+        $('.date_time').datetimepicker();
         /*选中其中的form元素，因为之后会使用其监听submit事件*/
         $update_form = $task_detail.find('form');
         /*选中显示task内容的元素*/
@@ -216,7 +230,7 @@
         $task_detail_content.on('dblclick',function () {
             $task_detail_content_input.show();
             $task_detail_content.hide();
-        })
+        });
 
         $update_form.on('submit', function (e) {
             e.preventDefault();
@@ -232,7 +246,7 @@
 
     /*渲染单条task*/
     function render_task_item(data,index) {
-        if(!data || !index) return;
+        if (!data == null|| !index == null) return;
         var list_item_tpl =
             '<div class="task-item" data-index="' + index + '">' +
             '<span><input class="complete" '+ (data.complete ? 'checked':'') + ' type="checkbox"/></span>' +
