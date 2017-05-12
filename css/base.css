@@ -172,3 +172,9 @@ button{
 .action:hover{
     color:#000;
 }
+
+.msg{
+    display: none;
+    text-align: center;
+    background: #FF1493;
+}

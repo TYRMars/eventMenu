@@ -152,13 +152,25 @@
     }
 
     function task_remind_check() {
-        for(var i=0;i<task_list.length;i++){
-            var item =get(i);
-            if(!item || !item.remind_date)
-            console.log('item',item);
-        }
+        var current_timestamp;
+        var itl = setInterval(function () {
+            for(var i=0;i<task_list.length;i++){
+                var item =get(i),task_timestamp;
+                if(!item || !item.remind_date)continue;
+                current_timestamp = (new Date()).getTime();
+                task_timestamp = (new Date(item.remind_date)).getTime();
+                if(current_timestamp - task_timestamp >=1){
+                    update_task(i,{informed:true});
+                    notify(item.content);
+                }
+            }
+        }, 300);
     }
 
+    /**/
+    function notify() {
+        console.log('1',1);
+    }
     /*传递task_list更新页面*/
     function render_task_list() {
         var $task_list = $('.task-list');
@@ -166,7 +178,6 @@
         var complete_items = [];
         for (var i = 0; i < task_list.length; i++) {
             var item = task_list[i];
-            console.log('item',item);
             if (item && item.complete){
                 complete_items[i] = item;
             }
@@ -183,7 +194,6 @@
             $task_list.append($task);
         }
 
-        console.log('$task_list',$task_list);
         $task_delete = $('.action.delete');
         $task_detail_trigger = $('.action.detail');
         $checkbox_complete = $('.task-list .complete[type=checkbox]');
@@ -253,11 +263,7 @@
 
     /*渲染单条task*/
     function render_task_item(data,index) {
-        console.log('index',index);
-        console.log('data',data);
         if (!data || !index ) return;
-        console.log('index',index);
-        console.log('data',data);
         var list_item_tpl =
             '<div class="task-item" data-index="' + index + '">' +
             '<span><input class="complete" '+ (data.complete ? 'checked':'') + ' type="checkbox"/></span>' +
