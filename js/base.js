@@ -31,7 +31,7 @@
     function listen_msg_event() {
         $msg_confirm.on('click',function () {
             hide_msg();
-        })
+        });
     }
 
     function  on_add_task_form_submit(e) {
@@ -155,6 +155,7 @@
     /*存储task_list到store*/
     function init() {
         task_list = store.get('task_list') || [];
+        listen_msg_event();
         if (task_list.length)
             render_task_list();
         task_remind_check();
