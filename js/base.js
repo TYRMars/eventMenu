@@ -18,12 +18,21 @@
         ,$task_detail_content
         ,$task_detail_content_input
         ,$checkbox_complete
+        ,$msg = $('.msg')
+        ,$msg_content = $msg.find('.msg-content')
+        ,$msg_confirm = $msg.find('button')
         ;
 
     init();
 
     $form_add_task.on('submit', on_add_task_form_submit);
     $task_detail_mask.on('click',hide_task_detail);
+
+    function listen_msg_event() {
+        $msg_confirm.on('click',function () {
+            hide_msg();
+        })
+    }
 
     function  on_add_task_form_submit(e) {
         var in_task ={}, $input;
@@ -152,6 +161,7 @@
     }
 
     function task_remind_check() {
+        show_msg();
         var current_timestamp;
         var itl = setInterval(function () {
             for(var i=0;i<task_list.length;i++){
@@ -161,16 +171,22 @@
                 task_timestamp = (new Date(item.remind_date)).getTime();
                 if(current_timestamp - task_timestamp >=1){
                     update_task(i,{informed:true});
-                    notify(item.content);
+                    show_msg(item.content);
                 }
             }
         }, 300);
     }
 
-    /**/
-    function notify() {
-        console.log('1',1);
+    /*展示通知*/
+    function show_msg(msg) {
+        $msg_content.html(msg);
+        $msg.show();
     }
+    /*通知隐藏*/
+    function hide_msg(msg) {
+        $msg.hide();
+    }
+
     /*传递task_list更新页面*/
     function render_task_list() {
         var $task_list = $('.task-list');
