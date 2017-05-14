@@ -28,6 +28,7 @@
     $form_add_task.on('submit', on_add_task_form_submit);
     $task_detail_mask.on('click',hide_task_detail);
 
+    /*注册button事件*/
     function listen_msg_event() {
         $msg_confirm.on('click',function () {
             hide_msg();
@@ -167,11 +168,11 @@
         var itl = setInterval(function () {
             for(var i=0;i<task_list.length;i++){
                 var item =get(i),task_timestamp;
-                if(!item || !item.remind_date)continue;
+                if(!item || !item.remind_date || item.informed)continue;
                 current_timestamp = (new Date()).getTime();
                 task_timestamp = (new Date(item.remind_date)).getTime();
                 if(current_timestamp - task_timestamp >=1){
-                    update_task(i,{informed:true});
+                    update_task(i, {informed: true});
                     show_msg(item.content);
                 }
             }
@@ -180,6 +181,7 @@
 
     /*展示通知*/
     function show_msg(msg) {
+        console.log('1',1);
         $msg_content.html(msg);
         $msg.show();
     }
