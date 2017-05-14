@@ -20,7 +20,8 @@
         ,$checkbox_complete
         ,$msg = $('.msg')
         ,$msg_content = $msg.find('.msg-content')
-        ,$msg_confirm = $msg.find('button')
+        ,$msg_confirm = $msg.find('.confirmed')
+        ,$alerter = $('.alerter')
         ;
 
     init();
@@ -41,14 +42,11 @@
         e.preventDefault();
         /*获取Task的值*/
         $input=$(this).find('input[name=content]');
-        console.log('$input',$input);
         in_task.content = $input.val();
-        console.log('in_task',in_task);
         /*如果新Task的值为空 则直接返回 否则继续执行*/
         if(!in_task.content) return;
         /*存入新Task*/
         if(add_task(in_task)) {
-            console.log('in_task',in_task);
             //render_task_list();
             $input.val(null);
         }
@@ -112,8 +110,7 @@
 
     /*更新task*/
     function update_task(index,data) {
-        if(!index || !task_list[index])
-            return;
+        if(!index || !task_list[index])return;
         task_list[index]= $.extend({}, task_list[index], data);
         refresh_task_list();
     }
@@ -127,9 +124,7 @@
     /*添加task*/
     function add_task(new_task) {
         /*将新Task推入Task__list*/
-        console.log('new_task',new_task);
         task_list.push(new_task);
-        console.log('task_list',task_list);
         /*更新localStorage*/
         refresh_task_list();
         return true;
@@ -139,7 +134,6 @@
     function refresh_task_list() {
         /*更新localStorage*/
         store.set('task_list', task_list);
-
         render_task_list();
     }
 
@@ -163,7 +157,6 @@
     }
 
     function task_remind_check() {
-        show_msg();
         var current_timestamp;
         var itl = setInterval(function () {
             for(var i=0;i<task_list.length;i++){
@@ -181,8 +174,9 @@
 
     /*展示通知*/
     function show_msg(msg) {
-        console.log('1',1);
+        if(!msg) return;
         $msg_content.html(msg);
+        $alerter.get(0).play();
         $msg.show();
     }
     /*通知隐藏*/
@@ -226,11 +220,8 @@
 
     /*渲染指定Task的详细信息*/
     function render_task_detail(index) {
-        console.log('index',index);
         if(index === undefined || !task_list[index]) return;
-        console.log('index',index);
         var item = task_list[index];
-
         var tpl='<form>'+
             '<div class="content">'+
             item.content  +

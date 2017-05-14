@@ -14,13 +14,14 @@
     outline: 0;
 }
 body{
+    margin: 0px;
     background: #285e8e;
     color: #fff;
 }
 .container
 {
     max-width: 850px;
-    margin:auto;
+    margin: 0 auto;
     position: relative;
     padding: 0 10px;
 }
@@ -39,6 +40,7 @@ button{
     border-radius: 3px;
     padding: 10px;
 }
+
 textarea,
 button,
 input[type=text],input[type=date]{
@@ -53,11 +55,16 @@ textarea{
     min-height: 100px;
 }
 textarea,input[type=text],input[type=date]{
+    width: 100%;
     display: block;
     background: #ddd;
     -webkit-box-shadow: inset 0 2px 2px rgba(0,0,0,.4);
     -moz-box-shadow: inset 0 2px 2px rgba(0,0,0,.4);
     box-shadow: inset 0 2px 2px rgba(0,0,0,.4);
+}
+
+textarea{
+    min-height: 100px;
 }
 
 textarea:hover,
@@ -178,4 +185,12 @@ button{
     text-align: center;
     background: #FF1493;
     padding: 10px;
+    color: #333;
+}
+
+.anchor{
+    cursor: pointer;
+}
+.alerter{
+    opacity: 1;
 }
