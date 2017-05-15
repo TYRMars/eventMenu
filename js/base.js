@@ -7,6 +7,8 @@
 
     /*声明变量*/
     var $form_add_task = $('.add-task')
+        ,$window = $(window)
+        ,$body = $('body')
         ,$task_delete
         ,$task_detail
         ,$task_detail_trigger
@@ -25,9 +27,69 @@
         ;
 
     init();
-
+    pop();
     $form_add_task.on('submit', on_add_task_form_submit);
     $task_detail_mask.on('click',hide_task_detail);
+
+    function pop(arg) {
+        if(!arg){
+            console.error('pop serror');
+        }
+
+        var conf ={},$box,$mask;
+
+        $box = $('<div></div>')
+            .css({
+                width: 300,
+                height: 200,
+                background:'#fff',
+                position: 'fixed',
+            })
+
+        $mask = $('<div></div>')
+            .css({
+                position: 'fixed',
+                background:'rgba(0,0,0,.4)',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+            })
+
+        function adjust_box_positon() {
+            var window_width = $window.width()
+                ,window_height = $window.height()
+                ,box_width = $box.width()
+                ,box_height = $box.height()
+                ,move_x
+                ,move_y;
+
+            move_x = (window_width - box_width)/2;
+            move_y = (window_height - box_height)/2;
+
+            $box.css({
+                left: move_x,
+                height: move_y,
+            })
+        }
+
+        $window.on('resize',function () {
+            adjust_box_positon();
+        })
+
+        if (typeof arg == 'string'){
+            conf.title =arg;
+        }
+        else{
+            conf = $.extend(conf,arg);
+        }
+
+        $mask.appendTo($body);
+        $box.appendTo($body);
+
+    }
+
+
 
     /*注册button事件*/
     function listen_msg_event() {
