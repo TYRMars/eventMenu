@@ -27,24 +27,68 @@
         ;
 
     init();
-    pop();
+    
     $form_add_task.on('submit', on_add_task_form_submit);
     $task_detail_mask.on('click',hide_task_detail);
 
+    /*自定义alert*/
     function pop(arg) {
         if(!arg){
             console.error('pop serror');
         }
 
-        var conf ={},$box,$mask;
+        var conf ={},
+            $box,
+            $mask,
+            $title,
+            $content,
+            $cancel,
+            dfd,
+            timer,
+            confirmed,
+            $confirm;
 
-        $box = $('<div></div>')
+        dfd = $.Deferred();
+
+        if (typeof arg == 'string'){
+            conf.title =arg;
+        }
+        else{
+            conf = $.extend(conf,arg);
+        }
+
+        $box = $('<div>' +
+                '<div class="pop-title">'+ conf.title +'</div>'+
+                '<div class="pop-content">'+
+                '<div><button style="margin-right: 5px" class="primary confirm">确定</button>' +
+                '<button class="cancel">取消</button>' +
+                '</div>'+
+                '</div>'+
+                '</div>')
             .css({
+                color: '#000',
                 width: 300,
-                height: 200,
+                height: 'auto',
                 background:'#fff',
                 position: 'fixed',
+                'boder-radius':3,
+                'box-shadow':'0 1px 2px rgba(0,0,0,.5)'
             })
+
+        $title = $box.find('.pop-title').css({
+            padding:'5px 10px',
+            'font-weight':900,
+            'font-size':20,
+            'text-align':'center'
+        })
+
+        $content = $box.find('.pop-content').css({
+            padding:'5px 10px',
+            'text-align':'center'
+        })
+
+        $confirm = $content.find('button.confirm')
+        $cancel = $content.find('button.cancel')
 
         $mask = $('<div></div>')
             .css({
@@ -56,7 +100,33 @@
                 right: 0,
             })
 
-        function adjust_box_positon() {
+        timer = setInterval(function () {
+            if(confirmed !== undefined){
+                dfd.resolve(confirmed);
+                clearInterval(timer);
+                disms_pop();
+            }
+        },50);
+
+        $confirm.on('click',on_confirm)
+        $cancel.on('click',on_cancel);
+        $mask.on('click',on_cancel);
+
+
+        function on_cancel() {
+            confirmed = false;
+        }
+
+        function on_confirm() {
+            confirmed = true;
+        }
+
+        function disms_pop() {
+            $mask.remove();
+            $box.remove();
+        }
+
+        function adjust_box_position() {
             var window_width = $window.width()
                 ,window_height = $window.height()
                 ,box_width = $box.width()
@@ -65,28 +135,22 @@
                 ,move_y;
 
             move_x = (window_width - box_width)/2;
-            move_y = (window_height - box_height)/2;
+            move_y = (window_height - box_height)/2-20;
 
             $box.css({
                 left: move_x,
-                height: move_y,
+                top: move_y,
             })
         }
 
         $window.on('resize',function () {
-            adjust_box_positon();
+            adjust_box_position();
         })
-
-        if (typeof arg == 'string'){
-            conf.title =arg;
-        }
-        else{
-            conf = $.extend(conf,arg);
-        }
 
         $mask.appendTo($body);
         $box.appendTo($body);
-
+        $window.resize();
+        return dfd.promise();
     }
 
 
@@ -136,8 +200,11 @@
             var $this = $(this);
             var $item = $this.parent();
             var index = $item.data('index');
-            var tmp = confirm('确定删除！');
-            return tmp ? delete_task(index) : null;
+            /*确认删除*/
+            pop('确定删除！')
+            .then(function (r) {
+                r ? delete_task(index) : null;
+            })
         })
     }
 
