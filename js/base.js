@@ -219,7 +219,7 @@
             else
                 update_task(index, {complete: true});
         })
-    }
+      }
 
     /*得到task_list内容*/
     function get(index) {
